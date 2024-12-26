@@ -1,6 +1,6 @@
 (ns powerblog.pages
-  (:require [powerpack.markdown :as md]
-            [datomic.api :as d])
+  (:require [datomic-type-extensions.api :as d]
+            [powerpack.markdown :as md])
   (:import (java.time LocalDateTime)
            (java.time.format DateTimeFormatter)))
 
@@ -18,7 +18,7 @@
     (LocalDateTime/ofInstant (.toInstant inst) (java.time.ZoneId/of "Europe/Oslo"))))
 
 (defn ymd [^LocalDateTime ldt]
-  (.format ldt (DateTimeFormatter/ofPattern "MMMM d yyy")))
+  (.format ldt (DateTimeFormatter/ofPattern "yyy-MM-d")))
 
 (defn md [^LocalDateTime ldt]
   (.format ldt (DateTimeFormatter/ofPattern "MMMM d")))
@@ -41,7 +41,7 @@
           [:ul
            (for [blog-post (get-blog-posts (:app/db context))]
              [:li
-              [:p {:class "blog-post-list-date"} (:blog-post/published blog-post)]
+              [:p {:class "blog-post-list-date"} (ymd (:blog-post/published blog-post))]
               [:a {:href (:page/uri blog-post)} (:page/title blog-post)]])]))
 
 (defn render-article [context page]
